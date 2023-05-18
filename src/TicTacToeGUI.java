@@ -113,10 +113,18 @@ public class TicTacToeGUI extends JFrame {
         bottomPanel.add(statusTie, BorderLayout.EAST);
         bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add spacing around the bottom panel
 
-        add(gamePanel, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(gamePanel, BorderLayout.CENTER);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         createResultTable(); // Create the result table
+
+        JScrollPane scrollPane = new JScrollPane(resultTable);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        add(mainPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
 
         pack();
         setLocationRelativeTo(null);
@@ -177,13 +185,11 @@ public class TicTacToeGUI extends JFrame {
         player2Score += player2Result;
 
         int currentRound = (scoreRecords.size() % 10) + 1;
-        String[] resultRow = { Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result) };
+        String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
         scoreRecords.add(resultRow);
 
-        tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[] { "Round", "Player 1", "Player 2" });
+        tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
     }
-
-
 
     private void resetGame() {
         // Reset the game board and enable buttons
@@ -217,12 +223,6 @@ public class TicTacToeGUI extends JFrame {
         tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
         resultTable = new JTable(tableModel);
         resultTable.setEnabled(false);
-
-        JScrollPane scrollPane = new JScrollPane(resultTable);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
-        scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-        add(scrollPane, BorderLayout.NORTH);
     }
 
     public static void main(String[] args) {
