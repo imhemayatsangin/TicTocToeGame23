@@ -14,14 +14,20 @@ public class TicTacToeGUI extends JFrame {
     private int rounds;
     private int player1Score;
     private int player2Score;
+    private int totalTie;
     private JLabel scoreboardLabel;
-    private JLabel statusTie;
+  
     private JLabel player1ScoreLabel;
     private JLabel player2ScoreLabel;
     private JLabel roundsScoreLabel;
     private ArrayList<String[]> scoreRecords;
     private DefaultTableModel tableModel;
     private JTable resultTable;
+    
+    // Create labels for the scoreboard
+    private JLabel player1Label = new JLabel("Player 1(X)");
+    private JLabel roundsLabel = new JLabel("Rounds");
+    private JLabel player2Label = new JLabel("Player 2(O)");
 
     public TicTacToeGUI() {
         setTitle("Tic-Tac-Toe Game");
@@ -36,6 +42,7 @@ public class TicTacToeGUI extends JFrame {
         rounds = 0;
         player1Score = 0;
         player2Score = 0;
+        totalTie = 0;
         scoreRecords = new ArrayList<>();
 
         // Create buttons for each cell of the game board
@@ -82,18 +89,12 @@ public class TicTacToeGUI extends JFrame {
         scoreboardLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         scoreboardLabel.setBorder(new EmptyBorder(0, 0, 0, 10)); // Add spacing on the right side of the status label
 
-        statusTie = new JLabel("Tie");
-        statusTie.setFont(new Font("Arial", Font.PLAIN, 18));
-        statusTie.setBorder(new EmptyBorder(0, 0, 0, 20)); // Add spacing on the right side of the status label
-
+     
         JPanel scoreboardPanel = new JPanel(new GridLayout(2, 3));
         scoreboardPanel.setPreferredSize(new Dimension(400, 100));
         scoreboardPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add spacing around the scoreboard panel
 
-        // Create labels for the scoreboard
-        JLabel player1Label = new JLabel("Player 1(X)");
-        JLabel roundsLabel = new JLabel("Rounds");
-        JLabel player2Label = new JLabel("Player 2(O)");
+ 
 
         player1ScoreLabel = new JLabel(Integer.toString(player1Score));
         roundsScoreLabel = new JLabel(Integer.toString(rounds));
@@ -110,7 +111,7 @@ public class TicTacToeGUI extends JFrame {
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.add(scoreboardPanel, BorderLayout.CENTER);
         bottomPanel.add(scoreboardLabel, BorderLayout.NORTH);
-        bottomPanel.add(statusTie, BorderLayout.EAST);
+//        bottomPanel.add(statusTie, BorderLayout.EAST);
         bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add spacing around the bottom panel
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -171,6 +172,7 @@ public class TicTacToeGUI extends JFrame {
     private void updateScoreboard(int winner) {
         int player1Result = 0;
         int player2Result = 0;
+        int totalTieResult = 0;
 
         if (winner == 1) {
             player1Result = 1;
@@ -179,10 +181,12 @@ public class TicTacToeGUI extends JFrame {
         } else if (checkTie()) {
             player1Result = 0;
             player2Result = 0;
+            totalTieResult = 1;
         }
 
         player1Score += player1Result;
         player2Score += player2Result;
+        totalTie += totalTieResult;
 
         int currentRound = (scoreRecords.size() % 10) + 1;
         String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
@@ -209,12 +213,12 @@ public class TicTacToeGUI extends JFrame {
         }
 
         if (checkTie()) {
-            statusTie.setText("Tie: " + rounds);
+        	roundsScoreLabel.setText("Tie: " + rounds);
         } else {
-            statusTie.setText("");
+        	roundsScoreLabel.setText("");
         }
 
-        roundsScoreLabel.setText(Integer.toString(rounds));
+        roundsScoreLabel.setText(Integer.toString(totalTie));
         player1ScoreLabel.setText(Integer.toString(player1Score));
         player2ScoreLabel.setText(Integer.toString(player2Score));
     }
