@@ -192,7 +192,37 @@ public class TicTacToeGUI extends JFrame {
         String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
         scoreRecords.add(resultRow);
 
+        
+        
+        
         tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
+        
+					if(currentRound==10) {
+					        	
+						
+						roundsScoreLabel.setText(Integer.toString(totalTie));
+			            player1ScoreLabel.setText(Integer.toString(player1Score));
+			            player2ScoreLabel.setText(Integer.toString(player2Score));
+			            
+			            if(player1Score>player2Score) {
+			            	 JOptionPane.showMessageDialog(null, "Player 1 Win the Game! with( " + player1Score +" )Rounds!" );
+			            	tableModel.setRowCount(0);
+			            	currentRound = 0;
+			            }
+			            else if(player1Score<player2Score) {
+			            	 JOptionPane.showMessageDialog(null, "Player 2 Win the Game! with( " + player2Score +" )Rounds!" );
+				            	tableModel.setRowCount(0);
+				            	currentRound = 0;
+			            }
+			            else {
+			           	 JOptionPane.showMessageDialog(null, "Game is tied and Both the players are equal!" );
+			            	tableModel.setRowCount(0);
+			            	currentRound = 0;
+			            }
+			            
+			            
+			            
+					        }
     }
 
     private void resetGame() {
@@ -208,19 +238,23 @@ public class TicTacToeGUI extends JFrame {
         currentPlayer = 1;
         rounds++;
 
-        if (rounds == 11) {
-            rounds = 1;
-        }
+//        if (rounds == 5) {
+//            rounds = 1;
+//            tableModel.setRowCount(0);
+//            roundsScoreLabel.setText(Integer.toString(totalTie));
+//            player1ScoreLabel.setText(Integer.toString(player1Score));
+//            player2ScoreLabel.setText(Integer.toString(player2Score));
+//        }
 
-        if (checkTie()) {
-        	roundsScoreLabel.setText("Tie: " + rounds);
-        } else {
-        	roundsScoreLabel.setText("");
-        }
+//        if (checkTie()) {
+//        	roundsScoreLabel.setText("Tie: " + rounds);
+//        } else {
+//        	roundsScoreLabel.setText("");
+//        }
 
-        roundsScoreLabel.setText(Integer.toString(totalTie));
-        player1ScoreLabel.setText(Integer.toString(player1Score));
-        player2ScoreLabel.setText(Integer.toString(player2Score));
+//        roundsScoreLabel.setText(Integer.toString(totalTie));
+//        player1ScoreLabel.setText(Integer.toString(player1Score));
+//        player2ScoreLabel.setText(Integer.toString(player2Score));
     }
 
     private void createResultTable() {
