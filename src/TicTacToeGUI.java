@@ -4,6 +4,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class TicTacToeGUI extends JFrame {
@@ -26,7 +29,7 @@ public class TicTacToeGUI extends JFrame {
     
     // Create labels for the scoreboard
     private JLabel player1Label = new JLabel("Player 1(X)");
-    private JLabel roundsLabel = new JLabel("Rounds");
+    private JLabel roundsLabel = new JLabel("Tie");
     private JLabel player2Label = new JLabel("Player 2(O)");
 
     public TicTacToeGUI() {
@@ -129,6 +132,67 @@ public class TicTacToeGUI extends JFrame {
 
         pack();
         setLocationRelativeTo(null);
+        
+        // Add window listener to handle the closing event
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                confirmAndSaveGameState();
+            }
+        });
+        
+        
+    }
+    
+    // Method to show confirmation dialog and save game state
+    private void confirmAndSaveGameState() {
+        int option = JOptionPane.showConfirmDialog(null, "Do you want to save your game state?", "Save Game State",
+                JOptionPane.YES_NO_OPTION);
+
+        if (option == JOptionPane.YES_OPTION) {
+            saveGameStateToFile();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    // Method to save game state to a file
+    private void saveGameStateToFile() {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src/score.txt"));
+//
+//            roundsScoreLabel.setText(Integer.toString(totalTie));
+//            player1ScoreLabel.setText(Integer.toString(player1Score));
+//            player2ScoreLabel.setText(Integer.toString(player2Score));
+//            
+            
+            
+            
+            // Write scoreboard data
+            writer.write("Player 1 Wins: " + player1ScoreLabel.getText());
+            writer.newLine();
+            writer.write("Player 2 Wins: " + player2ScoreLabel.getText());
+            writer.newLine();
+            writer.write("Total Ties: " + roundsScoreLabel.getText());
+            writer.newLine();
+            writer.newLine();
+
+            // Write table data
+            writer.write("Round\tPlayer 1\tPlayer 2");
+            writer.newLine();
+            for (String[] record : scoreRecords) {
+                for (String field : record) {
+                    writer.write(field + "\t");
+                }
+                writer.newLine();
+            }
+
+            writer.close();
+
+            System.exit(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean checkWin(int player) {
@@ -208,16 +272,22 @@ public class TicTacToeGUI extends JFrame {
 			            	 JOptionPane.showMessageDialog(null, "Player 1 Win the Game! with( " + player1Score +" )Rounds!" );
 			            	tableModel.setRowCount(0);
 			            	currentRound = 0;
+			            	 resetGameAndScoreboard();
+			                 JOptionPane.showMessageDialog(null, "Game Restarted! Starting a new game.");
 			            }
 			            else if(player1Score<player2Score) {
 			            	 JOptionPane.showMessageDialog(null, "Player 2 Win the Game! with( " + player2Score +" )Rounds!" );
 				            	tableModel.setRowCount(0);
 				            	currentRound = 0;
+				            	 resetGameAndScoreboard();
+				                 JOptionPane.showMessageDialog(null, "Game Restarted! Starting a new game.");
 			            }
 			            else {
 			           	 JOptionPane.showMessageDialog(null, "Game is tied and Both the players are equal!" );
 			            	tableModel.setRowCount(0);
 			            	currentRound = 0;
+			            	 resetGameAndScoreboard();
+			                 JOptionPane.showMessageDialog(null, "Game Restarted! Starting a new game.");
 			            }
 			            
 			            
@@ -238,24 +308,17 @@ public class TicTacToeGUI extends JFrame {
         currentPlayer = 1;
         rounds++;
 
-//        if (rounds == 5) {
-//            rounds = 1;
-//            tableModel.setRowCount(0);
-//            roundsScoreLabel.setText(Integer.toString(totalTie));
-//            player1ScoreLabel.setText(Integer.toString(player1Score));
-//            player2ScoreLabel.setText(Integer.toString(player2Score));
-//        }
 
-//        if (checkTie()) {
-//        	roundsScoreLabel.setText("Tie: " + rounds);
-//        } else {
-//        	roundsScoreLabel.setText("");
-//        }
-
-//        roundsScoreLabel.setText(Integer.toString(totalTie));
-//        player1ScoreLabel.setText(Integer.toString(player1Score));
-//        player2ScoreLabel.setText(Integer.toString(player2Score));
     }
+
+    
+    private void resetGameAndScoreboard() {
+        resetGame();
+        scoreRecords.clear();
+        tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
+        resultTable.setModel(tableModel);
+    }
+
 
     private void createResultTable() {
         tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
