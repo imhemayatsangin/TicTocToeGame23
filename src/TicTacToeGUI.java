@@ -19,6 +19,7 @@ public class TicTacToeGUI extends JFrame {
     private int player2Score;
     private int totalTie;
     private JLabel scoreboardLabel;
+    private int row,col;
   
     private JLabel player1ScoreLabel;
     private JLabel player2ScoreLabel;
@@ -49,11 +50,13 @@ public class TicTacToeGUI extends JFrame {
         scoreRecords = new ArrayList<>();
 
         // Create buttons for each cell of the game board
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
+        for ( row = 0; row < 3; row++) {
+            for ( col = 0; col < 3; col++) {
                 buttons[row][col] = new JButton();
                 buttons[row][col].setFont(new Font("Arial", Font.BOLD, 48));
-                buttons[row][col].setBackground(Color.ORANGE); // Set the button background color to orange
+                buttons[row][col].setBackground(new Color(170,187,204)); // Set the button background color to170 187 204
+               // buttons[row][col].setBackground(new Color(39,170,225)); // Set the button background color to Sky Blue170 187 204
+             //   buttons[row][col].setBackground( Color.ORANGE);
                 gamePanel.add(buttons[row][col]);
 
                 int finalRow = row;
@@ -62,10 +65,17 @@ public class TicTacToeGUI extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (board[finalRow][finalCol] == 0) {
-                            // Mark the cell with the current player's symbol
-                            board[finalRow][finalCol] = currentPlayer;
-                            buttons[finalRow][finalCol].setText(currentPlayer == 1 ? "X" : "O");
-                            buttons[finalRow][finalCol].setEnabled(false);
+                        	// Mark the cell with the current player's symbol
+                        	board[finalRow][finalCol] = currentPlayer;
+                        	String symbol = currentPlayer == 1 ? "X" : "O";
+                        	buttons[finalRow][finalCol].setText(symbol);
+                        	buttons[finalRow][finalCol].setEnabled(false);
+                        	
+                        	buttons[finalRow][finalCol].setBackground(currentPlayer == 1 ? Color.RED : Color.BLUE);
+                        	buttons[finalRow][finalCol].setOpaque(true);
+                        	buttons[finalRow][finalCol].setBackground(new Color(170, 187, 204).brighter());
+
+                        	
 
                             // Check if the current player wins
                             if (checkWin(currentPlayer)) {
@@ -129,7 +139,7 @@ public class TicTacToeGUI extends JFrame {
 
         add(mainPanel, BorderLayout.CENTER);
         add(scrollPane, BorderLayout.SOUTH);
-
+        setIconImage(new ImageIcon("src/Tic-Tac-Toe-Game.png").getImage());
         pack();
         setLocationRelativeTo(null);
         
@@ -296,12 +306,15 @@ public class TicTacToeGUI extends JFrame {
     }
 
     private void resetGame() {
+    	//  buttons[row][col].setBackground(new Color(170,187,204)); // Set the button background color to170 187 204
         // Reset the game board and enable buttons
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 board[row][col] = 0;
                 buttons[row][col].setText("");
                 buttons[row][col].setEnabled(true);
+                
+                buttons[row][col].setBackground(new Color(170,187,204)); // Set the button background color to170 187 204
             }
         }
 
