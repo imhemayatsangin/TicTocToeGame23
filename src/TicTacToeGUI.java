@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class TicTacToeGUI extends JFrame {
     private static final long serialVersionUID = 1L;
     private JButton[][] buttons;
@@ -20,7 +21,7 @@ public class TicTacToeGUI extends JFrame {
     private int totalTie;
     private JLabel scoreboardLabel;
     private int row,col;
-  
+    private int currentRound;
     private JLabel player1ScoreLabel;
     private JLabel player2ScoreLabel;
     private JLabel roundsScoreLabel;
@@ -68,10 +69,20 @@ public class TicTacToeGUI extends JFrame {
                         	// Mark the cell with the current player's symbol
                         	board[finalRow][finalCol] = currentPlayer;
                         	String symbol = currentPlayer == 1 ? "X" : "O";
+                        	
                         	buttons[finalRow][finalCol].setText(symbol);
+                        	if (currentPlayer == 1) {
+                        	    buttons[finalRow][finalCol].setForeground(Color.RED); // Set X color to red
+                        	} else {
+                        	    buttons[finalRow][finalCol].setForeground(Color.GREEN); // Set O color to green
+                        	}
+
+
+                        	
                         	buttons[finalRow][finalCol].setEnabled(false);
                         	
-                        	buttons[finalRow][finalCol].setBackground(currentPlayer == 1 ? Color.RED : Color.BLUE);
+                        	
+                        	
                         	buttons[finalRow][finalCol].setOpaque(true);
                         	buttons[finalRow][finalCol].setBackground(new Color(170, 187, 204).brighter());
 
@@ -170,25 +181,21 @@ public class TicTacToeGUI extends JFrame {
     private void saveGameStateToFile() {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("src/score.txt"));
-//
-//            roundsScoreLabel.setText(Integer.toString(totalTie));
-//            player1ScoreLabel.setText(Integer.toString(player1Score));
-//            player2ScoreLabel.setText(Integer.toString(player2Score));
-//            
+           
             
             
             
             // Write scoreboard data
-            writer.write("Player 1 Wins: " + player1ScoreLabel.getText());
+            writer.write("Player1Wins:" + player1ScoreLabel.getText());
             writer.newLine();
-            writer.write("Player 2 Wins: " + player2ScoreLabel.getText());
+            writer.write("Player2Wins:" + player2ScoreLabel.getText());
             writer.newLine();
-            writer.write("Total Ties: " + roundsScoreLabel.getText());
+            writer.write("TotalTies:" + roundsScoreLabel.getText());
             writer.newLine();
             writer.newLine();
 
             // Write table data
-            writer.write("Round\tPlayer 1\tPlayer 2");
+            writer.write("Round\tPlayer1\tPlayer2");
             writer.newLine();
             for (String[] record : scoreRecords) {
                 for (String field : record) {
@@ -262,7 +269,7 @@ public class TicTacToeGUI extends JFrame {
         player2Score += player2Result;
         totalTie += totalTieResult;
 
-        int currentRound = (scoreRecords.size() % 10) + 1;
+        currentRound = (scoreRecords.size() % 10) + 1;
         String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
         scoreRecords.add(resultRow);
 
@@ -323,7 +330,36 @@ public class TicTacToeGUI extends JFrame {
 
 
     }
+    
 
+    
+//when game is resumed
+    // Method to set the label data
+    public void setLabelsData(String[] lines) {
+    	 String player1Wins = lines[0].split(":")[1].trim();
+    	    String player2Wins = lines[1].split(":")[1].trim();
+    	    String totalTies = lines[2].split(":")[1].trim();
+    	    
+    	    player1ScoreLabel.setText(player1Wins);
+    	    player2ScoreLabel.setText(player2Wins);
+    	    roundsScoreLabel.setText(totalTies);
+    	 
+    	   
+    	    
+    }
+
+    // Method to add a row to the table
+    public void addRowToTable(String round, String player1Score, String player2Score) {
+        Object[] rowData = {round, player1Score, player2Score};
+        tableModel.addRow(rowData);
+        
+        currentRound = tableModel.getRowCount();
+        System.out.println(currentRound);
+        
+    }
+    
+    //end of game resumed
+    
     
     private void resetGameAndScoreboard() {
         resetGame();
