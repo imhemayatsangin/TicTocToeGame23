@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class WelcomeGUI extends JFrame {
     private static final long serialVersionUID = 1L;
-
+    private JButton resumeGameButton; // Declare the button as a member variable
     public WelcomeGUI() {
         setTitle("Tic Tac Toe Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,9 +35,9 @@ public class WelcomeGUI extends JFrame {
         newGameButton.setForeground(Color.WHITE); // Set the text color
         buttonPanel.add(newGameButton, gbc);
 
-        JButton resumeGameButton = new JButton("Resume Game");
+        resumeGameButton = new JButton("Resume Game");
         resumeGameButton.setFont(new Font("Arial", Font.BOLD, 18));
-        resumeGameButton.setBackground(new Color(50, 205, 50)); // Set custom background color
+        resumeGameButton.setBackground( Color.ORANGE); // Set custom background color
         resumeGameButton.setForeground(Color.WHITE); // Set the text color
         buttonPanel.add(resumeGameButton, gbc);
 
@@ -63,6 +63,7 @@ public class WelcomeGUI extends JFrame {
 
         add(mainPanel, BorderLayout.CENTER);
         setIconImage(new ImageIcon("src/Tic-Tac-Toe-Game.png").getImage());
+        
         pack();
         setLocationRelativeTo(null);
 
@@ -84,8 +85,28 @@ public class WelcomeGUI extends JFrame {
         });
 
         setVisible(true);
+        // Check if the score.txt file is empty or not
+        checkScoreFile();
     }
 
+    private void checkScoreFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/score.txt"))) {
+            if (reader.readLine() == null) {
+                // The file is empty, disable the "Resume Game" button
+                resumeGameButton.setEnabled(false);
+            } else {
+                // The file is not empty, enable the "Resume Game" button
+                resumeGameButton.setEnabled(true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ... existing code ...
+
+    
+    
     private void readAndResumeGameState() {
         try (BufferedReader reader = new BufferedReader(new FileReader("src/score.txt"))) {
             String line;
