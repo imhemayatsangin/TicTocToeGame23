@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,7 +62,7 @@ public class WelcomeGUI extends JFrame {
         mainPanel.add(emptyPanel, mainGbc); // Add empty panel for equal spacing from the bottom
 
         add(mainPanel, BorderLayout.CENTER);
-
+        setIconImage(new ImageIcon("src/Tic-Tac-Toe-Game.png").getImage());
         pack();
         setLocationRelativeTo(null);
 
@@ -74,6 +76,9 @@ public class WelcomeGUI extends JFrame {
 
         resumeGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	 TicTacToeGUI ticTacToeGUI = new TicTacToeGUI();
+                 ticTacToeGUI.setVisible(true);
+                 dispose(); // Close the WelcomeGUI window
                 readAndResumeGameState();
             }
         });
@@ -82,15 +87,38 @@ public class WelcomeGUI extends JFrame {
     }
 
     private void readAndResumeGameState() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("src/score.txt"));
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/score.txt"))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line); // Replace with code to display the data in the GUI
+            String[] firstThreeLines = new String[3];
+
+            // Read the first three lines and store them in an array
+            for (int i = 0; i < 3; i++) {
+                firstThreeLines[i] = reader.readLine();
             }
-            reader.close();
+
+            // Create an instance of the child class
+            TicTacToeGUI child = new TicTacToeGUI();
+            child.setVisible(true);
+            // Pass the first three lines to the child class
+            child.setLabelsData(firstThreeLines);
+
+            // Skip the header line
+            reader.readLine();
+
+            // Read the remaining lines and update the table
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split("\t");
+                String round = data[0];
+                String player1Score = data[1];
+                String player2Score = data[2];
+
+                // Update the table with the retrieved data
+                child.addRowToTable(round, player1Score, player2Score);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
 }
