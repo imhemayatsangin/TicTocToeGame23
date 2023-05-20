@@ -192,10 +192,10 @@ public class TicTacToeGUI extends JFrame {
             writer.newLine();
             writer.write("TotalTies:" + roundsScoreLabel.getText());
             writer.newLine();
-            writer.newLine();
+//            writer.newLine();
 
             // Write table data
-            writer.write("Round\tPlayer1\tPlayer2");
+//            writer.write("Round\tPlayer1\tPlayer2");
             writer.newLine();
             for (String[] record : scoreRecords) {
                 for (String field : record) {
@@ -254,7 +254,12 @@ public class TicTacToeGUI extends JFrame {
         int player1Result = 0;
         int player2Result = 0;
         int totalTieResult = 0;
-
+   
+        
+//        roundsScoreLabel.setText("0");
+//        player1ScoreLabel.setText("0");
+//        player2ScoreLabel.setText("0");
+        
         if (winner == 1) {
             player1Result = 1;
         } else if (winner == 2) {
@@ -272,12 +277,12 @@ public class TicTacToeGUI extends JFrame {
         
         
         // Check if the ArrayList is empty
-        if (scoreRecords.isEmpty()) {
-        	   currentRound = (scoreRecords.size() % 10)+1 ;
-        } else {
-        	   currentRound = (scoreRecords.size() % 10) ;
-        }
-        
+//        if (scoreRecords.isEmpty()) {
+//        	   currentRound = (scoreRecords.size() % 10)+1 ;
+//        } else {
+//        	   currentRound = (scoreRecords.size() % 10) ;
+//        }
+        currentRound = (scoreRecords.size() % 10)+1;
         String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
         scoreRecords.add(resultRow);
 
@@ -286,38 +291,50 @@ public class TicTacToeGUI extends JFrame {
         
         tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
         
-					if(currentRound==10) {
-					        	
-						
-						roundsScoreLabel.setText(Integer.toString(totalTie));
-			            player1ScoreLabel.setText(Integer.toString(player1Score));
-			            player2ScoreLabel.setText(Integer.toString(player2Score));
-			            
-			            if(player1Score>player2Score) {
-			            	 JOptionPane.showMessageDialog(null, "Player 1 Win the Game! with( " + player1Score +" )Rounds!" );
-			            	tableModel.setRowCount(0);
-			            	currentRound = 0;
-			            	 resetGameAndScoreboard();
-			                 JOptionPane.showMessageDialog(null, "Game Restarted! Starting a new game.");
-			            }
-			            else if(player1Score<player2Score) {
-			            	 JOptionPane.showMessageDialog(null, "Player 2 Win the Game! with( " + player2Score +" )Rounds!" );
-				            	tableModel.setRowCount(0);
-				            	currentRound = 0;
-				            	 resetGameAndScoreboard();
-				                 JOptionPane.showMessageDialog(null, "Game Restarted! Starting a new game.");
-			            }
-			            else {
-			           	 JOptionPane.showMessageDialog(null, "Game is tied and Both the players are equal!" );
-			            	tableModel.setRowCount(0);
-			            	currentRound = 0;
-			            	 resetGameAndScoreboard();
-			                 JOptionPane.showMessageDialog(null, "Game Restarted! Starting a new game.");
-			            }
-			            
-			            
-			            
-					        }
+        if (currentRound == 10) {
+       
+        	  roundsScoreLabel.setText(Integer.toString(totalTie));
+              player1ScoreLabel.setText(Integer.toString(player1Score));
+              player2ScoreLabel.setText(Integer.toString(player2Score));
+        	
+        	
+
+            if (player1Score > player2Score) {
+                JOptionPane.showMessageDialog(null, "Player 1 wins the game with " + player1Score + " rounds!");
+            } else if (player1Score < player2Score) {
+                JOptionPane.showMessageDialog(null, "Player 2 wins the game with " + player2Score + " rounds!");
+            } else {
+                JOptionPane.showMessageDialog(null, "The game is tied. Both players have the same number of rounds!");
+            }
+
+            tableModel.setRowCount(0);
+            currentRound = 0;
+            resetGameAndScoreboard();
+            JOptionPane.showMessageDialog(null, "Game restarted! Starting a new game.");
+            
+            // Create a timer that triggers after 2 seconds
+            Timer timer = new Timer(2000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    roundsScoreLabel.setText(Integer.toString(0));
+                    player1ScoreLabel.setText(Integer.toString(0));
+                    player2ScoreLabel.setText(Integer.toString(0));
+                }
+            });
+
+            // Start the timer
+            timer.setRepeats(false); // Set to false to only run once
+            timer.start();
+            
+            
+        }
+					roundsScoreLabel.setText(Integer.toString(totalTie));
+		            player1ScoreLabel.setText(Integer.toString(player1Score));
+		            player2ScoreLabel.setText(Integer.toString(player2Score));
+		            
+		            
+		      
+					
     }
 
     private void resetGame() {
