@@ -269,7 +269,15 @@ public class TicTacToeGUI extends JFrame {
         player2Score += player2Result;
         totalTie += totalTieResult;
 
-        currentRound = (scoreRecords.size() % 10) + 1;
+        
+        
+        // Check if the ArrayList is empty
+        if (scoreRecords.isEmpty()) {
+        	   currentRound = (scoreRecords.size() % 10)+1 ;
+        } else {
+        	   currentRound = (scoreRecords.size() % 10) ;
+        }
+        
         String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
         scoreRecords.add(resultRow);
 
@@ -330,9 +338,7 @@ public class TicTacToeGUI extends JFrame {
 
 
     }
-    
-
-    
+   
 //when game is resumed
     // Method to set the label data
     public void setLabelsData(String[] lines) {
@@ -343,18 +349,15 @@ public class TicTacToeGUI extends JFrame {
     	    player1ScoreLabel.setText(player1Wins);
     	    player2ScoreLabel.setText(player2Wins);
     	    roundsScoreLabel.setText(totalTies);
-    	 
-    	   
-    	    
+    
     }
 
     // Method to add a row to the table
     public void addRowToTable(String round, String player1Score, String player2Score) {
-        Object[] rowData = {round, player1Score, player2Score};
-        tableModel.addRow(rowData);
-        
-        currentRound = tableModel.getRowCount();
-        System.out.println(currentRound);
+    	 
+      String[] resultRow = {round, player1Score, player2Score};
+      scoreRecords.add(resultRow);
+      tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
         
     }
     
