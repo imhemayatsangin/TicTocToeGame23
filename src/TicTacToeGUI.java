@@ -8,7 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+
 
 
 public class TicTacToeGUI extends JFrame {
@@ -264,6 +264,7 @@ public class TicTacToeGUI extends JFrame {
 
     
     private void updateScoreboard(int winner) {
+    
         int player1Result = 0;
         int player2Result = 0;
         int totalTieResult = 0;
@@ -289,14 +290,42 @@ public class TicTacToeGUI extends JFrame {
         scoreRecords.add(resultRow);
      tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
      
-
+     if (scoreboardLabels.size() > 0) {
+         scoreboardLabels.remove(scoreboardLabels.size() - 1);
+     }
+     
+     for (String[] row : scoreboardLabels) {
+     	player1Score += Integer.parseInt(row[1]);
+     	totalTie += Integer.parseInt(row[2]);
+     	player2Score += Integer.parseInt(row[3]);
+     }
+     
+		            String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
+		         
+		            scoreboardLabels.add(resultRow1); // Add the sum row
+		            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+		            
         
         if (currentRound == 10) {
        
         	
-        	   String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
-	            scoreboardLabels.add(resultRow1);
-	            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+            if (scoreboardLabels.size() > 0) {
+                scoreboardLabels.remove(scoreboardLabels.size() - 1);
+            }
+            
+            for (String[] row : scoreboardLabels) {
+            	player1Score += Integer.parseInt(row[1]);
+            	totalTie += Integer.parseInt(row[2]);
+            	player2Score += Integer.parseInt(row[3]);
+            }
+            
+        
+          
+    		            String[] resultRow2 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
+    		         
+    		            scoreboardLabels.add(resultRow2); // Add the sum row
+    		            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+    		            
 
             if (player1Score > player2Score) {
                 JOptionPane.showMessageDialog(null, "Player 1 wins the game with " + player1Score + " rounds!");
@@ -307,16 +336,23 @@ public class TicTacToeGUI extends JFrame {
             }
 
             tableModel.setRowCount(0);
+         
             currentRound = 0;
-            resetGameAndScoreboard();
+         
+           
             JOptionPane.showMessageDialog(null, "Game restarted! Starting a new game.");
             
             // Create a timer that triggers after 2 seconds
             Timer timer = new Timer(2000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-
-//                	scoreboardLabels.clear();
+                	 resetGameAndScoreboard();
+                ScoreCardTable.setRowCount(0);
+            	scoreboardLabels.clear();
+            	  player1Score =0;
+                  player2Score =  0;
+                  totalTie = 0;
+            	
                 }
             });
 
@@ -327,26 +363,10 @@ public class TicTacToeGUI extends JFrame {
             
         }
      
-        System.out.println(player1Score);
+     
        
         
-        if (scoreboardLabels.size() > 0) {
-            scoreboardLabels.remove(scoreboardLabels.size() - 1);
-        }
-        
-        for (String[] row : scoreboardLabels) {
-        	player1Score += Integer.parseInt(row[1]);
-        	totalTie += Integer.parseInt(row[2]);
-        	player2Score += Integer.parseInt(row[3]);
-        }
-        
-    
-      
-		            String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
-		         
-		            scoreboardLabels.add(resultRow1); // Add the sum row
-		            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
-		            
+  
 
 		            
 //		            System.out.println( scoreboardLabels.add(resultRow1));
@@ -403,10 +423,11 @@ public class TicTacToeGUI extends JFrame {
     private void resetGameAndScoreboard() {
         resetGame();
         scoreRecords.clear();
+        scoreboardLabels.clear();
         tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
         resultTable.setModel(tableModel);
         
-        scoreboardLabels.clear();
+       
         ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
         resultScoreCardTable.setModel(ScoreCardTable); // Add this line to set the new model to the resultScoreCardTable
     }
@@ -418,6 +439,8 @@ public class TicTacToeGUI extends JFrame {
         resultTable = new JTable(tableModel);
         resultTable.setEnabled(false);
         
+        
+       
         ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
         resultScoreCardTable = new JTable(ScoreCardTable);
         resultScoreCardTable.setEnabled(false);
