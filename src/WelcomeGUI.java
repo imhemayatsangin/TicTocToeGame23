@@ -110,18 +110,24 @@ public class WelcomeGUI extends JFrame {
     private void readAndResumeGameState() {
         try (BufferedReader reader = new BufferedReader(new FileReader("src/score.txt"))) {
             String line;
-            String[] firstThreeLines = new String[3];
 
-            // Read the first three lines and store them in an array
-            for (int i = 0; i < 3; i++) {
-                firstThreeLines[i] = reader.readLine();
-            }
+            // Skip the header line
+            reader.readLine();
 
-            // Create an instance of the child class
             TicTacToeGUI child = new TicTacToeGUI();
             child.setVisible(true);
-            // Pass the first three lines to the child class
-            child.setLabelsData(firstThreeLines);
+
+            // Read the first three lines and update the table
+            for (int i = 0; i < 3; i++) {
+                line = reader.readLine();
+                String[] data = line.split("\t");
+                String player1TotalScore = data[0];
+                String totalTie = data[1];
+                String playerTotalScore = data[2];
+
+                // Update the table with the retrieved data
+                child.addRowToScoreTable(player1TotalScore, totalTie, playerTotalScore);
+            }
 
             // Skip the header line
             reader.readLine();
@@ -140,6 +146,7 @@ public class WelcomeGUI extends JFrame {
             e.printStackTrace();
         }
     }
+
 
 
 }
