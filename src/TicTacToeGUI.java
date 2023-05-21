@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class TicTacToeGUI extends JFrame {
@@ -16,28 +17,45 @@ public class TicTacToeGUI extends JFrame {
     private int currentPlayer; // Player 1: 1, Player 2: 2
     private int[][] board;
     private int rounds;
-    private int player1Score;
-    private int player2Score;
-    private int totalTie;
+    private int player1Score=0;
+    private int player2Score=0;
+    private int totalTie=0;
     private JLabel scoreboardLabel;
     private int row,col;
     private int currentRound;
-    private JLabel player1ScoreLabel;
-    private JLabel player2ScoreLabel;
-    private JLabel roundsScoreLabel;
+
     private ArrayList<String[]> scoreRecords;
     private DefaultTableModel tableModel;
     private JTable resultTable;
     
     // Create labels for the scoreboard
-    private JLabel player1Label = new JLabel("Player 1(X)");
-    private JLabel roundsLabel = new JLabel("Tie");
-    private JLabel player2Label = new JLabel("Player 2(O)");
+    private ArrayList<String[]> scoreboardLabels;
+    private DefaultTableModel ScoreCardTable;
+    private JTable resultScoreCardTable;
+    
+
 
     public TicTacToeGUI() {
+    	
+    	  scoreRecords = new ArrayList<>();
+          scoreboardLabels = new ArrayList<>();
+          
+          createResultTable(); // Create the result table
+//          generateRandomData();
+          
+          
+    	 // Initialize the resultTable with the DefaultTableModel
+        tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
+        resultTable = new JTable(tableModel);
+
+        // Initialize the resultScoreCardTable with the DefaultTableModel
+//        ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+//        resultScoreCardTable = new JTable(ScoreCardTable);
+//     
+        
         setTitle("Tic-Tac-Toe Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(400, 500));
+        setPreferredSize(new Dimension(450, 750));
         setLayout(new BorderLayout());
 
         JPanel gamePanel = new JPanel(new GridLayout(3, 3));
@@ -45,16 +63,15 @@ public class TicTacToeGUI extends JFrame {
         board = new int[3][3];
         currentPlayer = 1;
         rounds = 0;
-        player1Score = 0;
-        player2Score = 0;
-        totalTie = 0;
-        scoreRecords = new ArrayList<>();
+    
+      
 
         // Create buttons for each cell of the game board
         for ( row = 0; row < 3; row++) {
             for ( col = 0; col < 3; col++) {
                 buttons[row][col] = new JButton();
                 buttons[row][col].setFont(new Font("Arial", Font.BOLD, 48));
+                buttons[row][col].setPreferredSize(new Dimension(100, 100)); // Set preferred size
                 buttons[row][col].setBackground(new Color(170,187,204)); // Set the button background color to170 187 204
                // buttons[row][col].setBackground(new Color(39,170,225)); // Set the button background color to Sky Blue170 187 204
              //   buttons[row][col].setBackground( Color.ORANGE);
@@ -112,44 +129,36 @@ public class TicTacToeGUI extends JFrame {
         scoreboardLabel = new JLabel("Score Board");
         scoreboardLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         scoreboardLabel.setBorder(new EmptyBorder(0, 0, 0, 10)); // Add spacing on the right side of the status label
-
-     
-        JPanel scoreboardPanel = new JPanel(new GridLayout(2, 3));
-        scoreboardPanel.setPreferredSize(new Dimension(400, 100));
-        scoreboardPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add spacing around the scoreboard panel
-
- 
-
-        player1ScoreLabel = new JLabel(Integer.toString(player1Score));
-        roundsScoreLabel = new JLabel(Integer.toString(rounds));
-        player2ScoreLabel = new JLabel(Integer.toString(player2Score));
-
-        // Add the labels to the scoreboard panel
-        scoreboardPanel.add(player1Label);
-        scoreboardPanel.add(roundsLabel);
-        scoreboardPanel.add(player2Label);
-        scoreboardPanel.add(player1ScoreLabel);
-        scoreboardPanel.add(roundsScoreLabel);
-        scoreboardPanel.add(player2ScoreLabel);
-
+      
+      
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(scoreboardPanel, BorderLayout.CENTER);
+      
         bottomPanel.add(scoreboardLabel, BorderLayout.NORTH);
-//        bottomPanel.add(statusTie, BorderLayout.EAST);
+     
         bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); // Add spacing around the bottom panel
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(gamePanel, BorderLayout.CENTER);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        createResultTable(); // Create the result table
+ 
+        JScrollPane scrollPane1 = new JScrollPane(resultScoreCardTable);
+        scrollPane1.setPreferredSize(new Dimension(200, 100));
+        scrollPane1.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+       add(scrollPane1, BorderLayout.CENTER);
+       
+ 
         JScrollPane scrollPane = new JScrollPane(resultTable);
         scrollPane.setPreferredSize(new Dimension(400, 200));
         scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        add(mainPanel, BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.NORTH);
+
         add(scrollPane, BorderLayout.SOUTH);
+        
+        
+        
         setIconImage(new ImageIcon("src/Tic-Tac-Toe-Game.png").getImage());
         pack();
         setLocationRelativeTo(null);
@@ -186,16 +195,18 @@ public class TicTacToeGUI extends JFrame {
             
             
             // Write scoreboard data
-            writer.write("Player1Wins:" + player1ScoreLabel.getText());
+            writer.write("Player1\tTie\tPlayer2");
             writer.newLine();
-            writer.write("Player2Wins:" + player2ScoreLabel.getText());
-            writer.newLine();
-            writer.write("TotalTies:" + roundsScoreLabel.getText());
-            writer.newLine();
+            for (String[] scoreboardLabel : scoreboardLabels) {
+                for (String field1 : scoreboardLabel) {
+                    writer.write(field1 + "\t");
+                }
+                writer.newLine();
+            }
 //            writer.newLine();
 
             // Write table data
-//            writer.write("Round\tPlayer1\tPlayer2");
+           writer.write("Round\tPlayer1\tPlayer2");
             writer.newLine();
             for (String[] record : scoreRecords) {
                 for (String field : record) {
@@ -250,16 +261,13 @@ public class TicTacToeGUI extends JFrame {
         return true; // All cells are filled, game is tied
     }
 
+
+    
     private void updateScoreboard(int winner) {
         int player1Result = 0;
         int player2Result = 0;
         int totalTieResult = 0;
-   
-        
-//        roundsScoreLabel.setText("0");
-//        player1ScoreLabel.setText("0");
-//        player2ScoreLabel.setText("0");
-        
+       
         if (winner == 1) {
             player1Result = 1;
         } else if (winner == 2) {
@@ -270,34 +278,25 @@ public class TicTacToeGUI extends JFrame {
             totalTieResult = 1;
         }
 
-        player1Score += player1Result;
-        player2Score += player2Result;
-        totalTie += totalTieResult;
+        player1Score =player1Score + player1Result;
+        player2Score =  player2Score +player2Result;
+        totalTie = totalTie +totalTieResult;
 
+       
         
-        
-        // Check if the ArrayList is empty
-//        if (scoreRecords.isEmpty()) {
-//        	   currentRound = (scoreRecords.size() % 10)+1 ;
-//        } else {
-//        	   currentRound = (scoreRecords.size() % 10) ;
-//        }
         currentRound = (scoreRecords.size() % 10)+1;
         String[] resultRow = {Integer.toString(currentRound), Integer.toString(player1Result), Integer.toString(player2Result)};
         scoreRecords.add(resultRow);
+     tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
+     
 
-        
-        
-        
-        tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
         
         if (currentRound == 10) {
        
-        	  roundsScoreLabel.setText(Integer.toString(totalTie));
-              player1ScoreLabel.setText(Integer.toString(player1Score));
-              player2ScoreLabel.setText(Integer.toString(player2Score));
         	
-        	
+        	   String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
+	            scoreboardLabels.add(resultRow1);
+	            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
 
             if (player1Score > player2Score) {
                 JOptionPane.showMessageDialog(null, "Player 1 wins the game with " + player1Score + " rounds!");
@@ -316,9 +315,8 @@ public class TicTacToeGUI extends JFrame {
             Timer timer = new Timer(2000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    roundsScoreLabel.setText(Integer.toString(0));
-                    player1ScoreLabel.setText(Integer.toString(0));
-                    player2ScoreLabel.setText(Integer.toString(0));
+
+//                	scoreboardLabels.clear();
                 }
             });
 
@@ -328,17 +326,40 @@ public class TicTacToeGUI extends JFrame {
             
             
         }
-					roundsScoreLabel.setText(Integer.toString(totalTie));
-		            player1ScoreLabel.setText(Integer.toString(player1Score));
-		            player2ScoreLabel.setText(Integer.toString(player2Score));
+     
+        System.out.println(player1Score);
+       
+        
+        if (scoreboardLabels.size() > 0) {
+            scoreboardLabels.remove(scoreboardLabels.size() - 1);
+        }
+        
+        for (String[] row : scoreboardLabels) {
+        	player1Score += Integer.parseInt(row[1]);
+        	totalTie += Integer.parseInt(row[2]);
+        	player2Score += Integer.parseInt(row[3]);
+        }
+        
+    
+      
+		            String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
+		         
+		            scoreboardLabels.add(resultRow1); // Add the sum row
+		            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
 		            
+
+		            
+//		            System.out.println( scoreboardLabels.add(resultRow1));
+		            
+		         
 		            
 		      
 					
     }
+    
 
     private void resetGame() {
-    	//  buttons[row][col].setBackground(new Color(170,187,204)); // Set the button background color to170 187 204
+    
         // Reset the game board and enable buttons
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -356,17 +377,15 @@ public class TicTacToeGUI extends JFrame {
 
     }
    
-//when game is resumed
-    // Method to set the label data
-    public void setLabelsData(String[] lines) {
-    	 String player1Wins = lines[0].split(":")[1].trim();
-    	    String player2Wins = lines[1].split(":")[1].trim();
-    	    String totalTies = lines[2].split(":")[1].trim();
-    	    
-    	    player1ScoreLabel.setText(player1Wins);
-    	    player2ScoreLabel.setText(player2Wins);
-    	    roundsScoreLabel.setText(totalTies);
     
+    // Method to add a row to the table
+    public void addRowToScoreTable(String player1TotalScore, String totalTie, String playerTotalScore) {
+    	 
+    	
+    	  String[] resultRow1 = {player1TotalScore, totalTie, playerTotalScore};
+         scoreboardLabels.add(resultRow1);
+         ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+        
     }
 
     // Method to add a row to the table
@@ -386,13 +405,25 @@ public class TicTacToeGUI extends JFrame {
         scoreRecords.clear();
         tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
         resultTable.setModel(tableModel);
+        
+        scoreboardLabels.clear();
+        ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+        resultScoreCardTable.setModel(ScoreCardTable); // Add this line to set the new model to the resultScoreCardTable
     }
+
 
 
     private void createResultTable() {
         tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
         resultTable = new JTable(tableModel);
         resultTable.setEnabled(false);
+        
+        ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+        resultScoreCardTable = new JTable(ScoreCardTable);
+        resultScoreCardTable.setEnabled(false);
+        
+       
+        
     }
 
     public static void main(String[] args) {
