@@ -118,7 +118,7 @@ public class WelcomeGUI extends JFrame {
             child.setVisible(true);
 
             // Read the first three lines and update the table
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 1; i++) {
                 line = reader.readLine();
                 String[] data = line.split("\t");
                 String player1TotalScore = data[0];
