@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -182,10 +183,24 @@ public class TicTacToeGUI extends JFrame {
         if (option == JOptionPane.YES_OPTION) {
             saveGameStateToFile();
         } else {
+        	 clearScoreFile();
             System.exit(0);
         }
     }
 
+ // Method to clear the contents of the score file
+    private void clearScoreFile() {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src/score.txt", false));
+            writer.write("");  // Write an empty string to clear the contents of the file
+            writer.close();
+            System.out.println("Score file cleared.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    
     // Method to save game state to a file
     private void saveGameStateToFile() {
         try {
@@ -290,21 +305,21 @@ public class TicTacToeGUI extends JFrame {
         scoreRecords.add(resultRow);
      tableModel.setDataVector(scoreRecords.toArray(new String[0][]), new String[]{"Round", "Player 1", "Player 2"});
      
-     if (scoreboardLabels.size() > 0) {
-         scoreboardLabels.remove(scoreboardLabels.size() - 1);
-     }
+     if (!scoreboardLabels.isEmpty()) {
+    	    scoreboardLabels.remove(scoreboardLabels.size() - 1);
+    	}
+
+    	for (String[] row : scoreboardLabels) {
+    	    player1Score += Integer.parseInt(row[1]);
+    	    totalTie += Integer.parseInt(row[2]);
+    	    player2Score += Integer.parseInt(row[3]);
+    	}
+
+    	String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
+    	scoreboardLabels.add(resultRow1); // Add the sum row
+    	ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+   
      
-     for (String[] row : scoreboardLabels) {
-     	player1Score += Integer.parseInt(row[1]);
-     	totalTie += Integer.parseInt(row[2]);
-     	player2Score += Integer.parseInt(row[3]);
-     }
-     
-		            String[] resultRow1 = {Integer.toString(player1Score), Integer.toString(totalTie), Integer.toString(player2Score)};
-		         
-		            scoreboardLabels.add(resultRow1); // Add the sum row
-		            ScoreCardTable.setDataVector(scoreboardLabels.toArray(new String[0][]), new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
-		            
         
         if (currentRound == 10) {
        
