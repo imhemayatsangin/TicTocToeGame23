@@ -19,7 +19,7 @@ public class TicTacToeClient extends JFrame {
 	private static final long serialVersionUID = -3456485401222133833L;
 	private static final String SERVER_ADDRESS = "localhost";
     private static final int SERVER_PORT = 12345;
-
+    private int roundCount = 1;
     private char[][] board;
     private JButton[][] buttons;
     private PrintWriter serverWriter;
@@ -222,12 +222,28 @@ public class TicTacToeClient extends JFrame {
 
         if (checkWin(symbol)) {
             JOptionPane.showMessageDialog(TicTacToeClient.this, "Player " + symbol + " wins!");
+            scoreRecords.add(new String[]{String.valueOf(roundCount), symbol == 'X' ? "1" : "0", symbol == 'O' ? "1" : "0"});
+            tableModel.addRow(new String[]{String.valueOf(roundCount), symbol == 'X' ? "1" : "0", symbol == 'O' ? "1" : "0"});
+            roundCount++;
             resetBoard();
         } else if (isBoardFull()) {
             JOptionPane.showMessageDialog(TicTacToeClient.this, "It's a draw!");
+            scoreRecords.add(new String[]{String.valueOf(roundCount), "0", "0"});
+            tableModel.addRow(new String[]{String.valueOf(roundCount), "0", "0"});
+            roundCount++;
             resetBoard();
         }
     }
+
+
+    private void updateTableData() {
+        tableModel.setRowCount(0); // Clear previous data
+
+        for (String[] record : scoreRecords) {
+            tableModel.addRow(record);
+        }
+    }
+
 
     private boolean checkWin(char symbol) {
         // Check rows
@@ -275,6 +291,7 @@ public class TicTacToeClient extends JFrame {
             }
         }
     }
+
 
     private char getPlayerSymbol() {
         return playerSymbol;
@@ -345,19 +362,26 @@ public class TicTacToeClient extends JFrame {
         }
     }
     private void createResultTable() {
-        tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
-        resultTable = new JTable(tableModel);
-        resultTable.setEnabled(false);
-        
-        
-       
-        ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
-        resultScoreCardTable = new JTable(ScoreCardTable);
-        resultScoreCardTable.setEnabled(false);
-        
-       
-        
-    }
+//        tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
+//        resultTable = new JTable(tableModel);
+//        resultTable.setEnabled(false);
+//        
+//        
+//       
+//        ScoreCardTable = new DefaultTableModel(new String[0][], new String[]{"Player 1:(X)", "Tie", "Player 2:(O)"});
+//        resultScoreCardTable = new JTable(ScoreCardTable);
+//        resultScoreCardTable.setEnabled(false);
+//        
+//       
+    	 tableModel = new DefaultTableModel(new String[0][], new String[]{"Round", "Player 1", "Player 2"});
+    	    resultTable = new JTable(tableModel);
+    	    resultTable.setEnabled(false);
+
+    	    for (String[] record : scoreRecords) {
+    	        tableModel.addRow(record);
+    	    }
+    	}
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
         	TicTacToeClient client1 = new TicTacToeClient("Player 1(X)");
